@@ -17,7 +17,7 @@
         "docs": "http://doc.campaignchain.com"
     },
     "require": {
-        "doctrine/migrations": "~1.4"
+        "doctrine/doctrine-migrations-bundle": "~1.1"
     },
     "autoload": {
         "psr-4": { "CampaignChain\\DeploymentUpdateBundle\\": "" }
@@ -26,14 +26,9 @@
         "campaignchain": {
             "kernel": {
                 "classes": [
-                    "CampaignChain\\Activity\\LinkedInBundle\\CampaignChainActivityLinkedInBundle"
-                ],
-                "routing":
-                {
-                    "name": "campaignchain_activity_linked_in",
-                    "resource": "@CampaignChainActivityLinkedInBundle/Resources/config/routing.yml",
-                    "prefix": "/"
-                }
+                    "CampaignChain\\DeploymentUpdateBundle\\CampaignChainDeploymentUpdateBundle",
+                    "Doctrine\\Bundle\\MigrationsBundle\\DoctrineMigrationsBundle"
+                ]
             }
         }
     }
