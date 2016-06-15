@@ -1,0 +1,40 @@
+{
+    "name": "campaignchain/deployment-update",
+    "description": "Additional CLI tools",
+    "keywords": ["campaignchain"],
+    "type": "campaignchain-deployment-update",
+    "homepage": "http://www.campaignchain.com",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "CampaignChain, Inc.",
+            "email": "info@campaignchain.com",
+            "homepage": "http://www.campaignchain.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/CampaignChain/campaignchain-ce/issues",
+        "docs": "http://doc.campaignchain.com"
+    },
+    "require": {
+        "doctrine/migrations": "~1.4"
+    },
+    "autoload": {
+        "psr-4": { "CampaignChain\\DeploymentUpdateBundle\\": "" }
+    },
+    "extra": {
+        "campaignchain": {
+            "kernel": {
+                "classes": [
+                    "CampaignChain\\Activity\\LinkedInBundle\\CampaignChainActivityLinkedInBundle"
+                ],
+                "routing":
+                {
+                    "name": "campaignchain_activity_linked_in",
+                    "resource": "@CampaignChainActivityLinkedInBundle/Resources/config/routing.yml",
+                    "prefix": "/"
+                }
+            }
+        }
+    }
+}
