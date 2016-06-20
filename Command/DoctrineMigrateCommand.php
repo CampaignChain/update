@@ -11,9 +11,11 @@ namespace CampaignChain\DeploymentUpdateBundle\Command;
 
 use CampaignChain\CoreBundle\Entity\Bundle;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -24,13 +26,15 @@ class DoctrineMigrateCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('campaignchain:doctrine:migration')
-            ->setDescription('Run doctrine migration for the packages.')
+            ->setName('campaignchain:database:migrate')
+            ->setDescription('Run database migration for the packages.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $output->writeln('<info>Gathering migration files from CampaignChain packages</info>');
+
         $rootDir = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
         $finder = new Finder();
         // Find all the CampaignChain module configuration files.
@@ -62,6 +66,7 @@ class DoctrineMigrateCommand extends ContainerAwareCommand
             return;
         }
 
+        /** @var Bundle[] $bundlesHasMigrations */
         $bundlesHasMigrations = [];
 
         foreach ($bundleList as $bundle) {
@@ -74,12 +79,29 @@ class DoctrineMigrateCommand extends ContainerAwareCommand
         if (empty($bundlesHasMigrations)) {
             return;
         }
+
+        $migrationDir = $rootDir.'app'.DIRECTORY_SEPARATOR.'DoctrineMigrations';
         $fs = new Filesystem();
-dump($bundlesHasMigrations);
 
         foreach ($bundlesHasMigrations as $bundleHasMigrations) {
+            $packageMigrationsDir = $rootDir.'vendor'.DIRECTORY_SEPARATOR.$bundleHasMigrations->getName().'/Resources/migrations';
+            $migrationFiles = new Finder();
+            $migrationFiles->files()
+                ->in($packageMigrationsDir)
+                ->name('Version*.php');
+
+            /** @var SplFileInfo $migrationFile */
+            foreach ($migrationFiles as $migrationFile) {
+                $fs->copy($migrationFile->getPathname(), $migrationDir.DIRECTORY_SEPARATOR.$migrationFile->getFilename(), true);
+            }
 
         }
+
+        $this->getApplication()
+            ->run(new ArrayInput([
+                'command' => 'doctrine:migrations:migrate',
+                '--no-interaction' => true,
+            ]), $output);
 
     }
 
