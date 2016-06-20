@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace CampaignChain\CoreBundle;
+namespace CampaignChain\DeploymentUpdateBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
