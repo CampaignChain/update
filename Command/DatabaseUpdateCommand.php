@@ -23,7 +23,7 @@ use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
 class DatabaseUpdateCommand extends ContainerAwareCommand
 {
-    CONST MIGRATION_PATH = 'Resources'.DIRECTORY_SEPARATOR.'update';
+    CONST MIGRATION_PATH = 'Resources'.DIRECTORY_SEPARATOR.'updates';
 
     protected function configure()
     {
@@ -74,6 +74,11 @@ class DatabaseUpdateCommand extends ContainerAwareCommand
 
         foreach ($bundleList as $bundle) {
             $packageMigrationsDir = $rootDir.'vendor'.DIRECTORY_SEPARATOR.$bundle->getName().DIRECTORY_SEPARATOR.self::MIGRATION_PATH;
+
+            if (!$fs->exists($packageMigrationsDir)) {
+                continue;
+            }
+
             $migrationFiles = new Finder();
             $migrationFiles->files()
                 ->in($packageMigrationsDir)
