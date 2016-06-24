@@ -47,6 +47,7 @@ class GenerateDatabaseUpdateCommand extends ContainerAwareCommand
             0
         );
         $question->setErrorMessage('Package name %s is invalid.');
+        $question->setPrompt('<question>Please select either the number or the name of the package :</question>');
 
         $selectedName = $helper->ask($input, $output, $question);
         $output->writeln('You have selected: '.$selectedName);
@@ -83,10 +84,15 @@ class GenerateDatabaseUpdateCommand extends ContainerAwareCommand
         }
 
         $rootDir = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
-        $targetFile = $rootDir.'vendor'.DIRECTORY_SEPARATOR.$selectedBundle->getName().DIRECTORY_SEPARATOR.DoctrineMigrateCommand::MIGRATION_PATH.DIRECTORY_SEPARATOR.$fileNames[0];
+        $targetFile = $rootDir.'vendor'.DIRECTORY_SEPARATOR.$selectedBundle->getName().DIRECTORY_SEPARATOR.DatabaseUpdateCommand::MIGRATION_PATH.DIRECTORY_SEPARATOR.$fileNames[0];
         $fs = new Filesystem();
         $fs->copy($pathForMigrationFile, $targetFile);
         $fs->remove($pathForMigrationFile);
+
+        $output->writeln('Generation finished. You can find your empty file here:');
+        $output->writeln('');
+        $output->writeln('<comment>'.$targetFile.'</comment>');
+        $output->writeln('');
     }
 
     /**

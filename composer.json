@@ -2,7 +2,7 @@
     "name": "campaignchain/deployment-update",
     "description": "Additional CLI tools",
     "keywords": ["campaignchain"],
-    "type": "campaignchain-distribution",
+    "type": "campaignchain-symfony",
     "homepage": "http://www.campaignchain.com",
     "license": "Apache-2.0",
     "authors": [
