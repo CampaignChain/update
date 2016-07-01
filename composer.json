@@ -1,10 +1,10 @@
 {
     "name": "campaignchain/deployment-update",
-    "description": "Additional CLI tools",
+    "description": "Database update scripts",
     "keywords": ["campaignchain"],
     "type": "campaignchain-symfony",
     "homepage": "http://www.campaignchain.com",
-    "license": "Apache-2.0",
+    "license": "proprietary",
     "authors": [
         {
             "name": "CampaignChain, Inc.",
@@ -13,7 +13,7 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/CampaignChain/campaignchain-ce/issues",
+        "issues": "https://github.com/CampaignChain/campaignchain-custom/issues",
         "docs": "http://doc.campaignchain.com"
     },
     "require": {
