@@ -1,0 +1,16 @@
+# This file is part of the CampaignChain package.
+#
+# (c) CampaignChain Inc. <info@campaignchain.com>
+#
+# For the full copyright and license information, please view the LICENSE
+# file that was distributed with this source code.
+services:
+    campaignchain.deployment.update.code_updater:
+        class: CampaignChain\DeploymentUpdateBundle\Service\CodeUpdateService
+        arguments:
+            - '@doctrine.orm.default_entity_manager'
+
+    campaignchain.deployment.update.dummy_updater:
+        class: CampaignChain\DeploymentUpdateBundle\Service\DummyUpdater
+        tags:
+            - { name: campaignchain.code_updater }
