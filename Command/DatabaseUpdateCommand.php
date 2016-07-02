@@ -23,7 +23,7 @@ use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
 class DatabaseUpdateCommand extends ContainerAwareCommand
 {
-    CONST MIGRATION_PATH = 'Resources'.DIRECTORY_SEPARATOR.'updates';
+    private $migrationPath;
 
     protected function configure()
     {
@@ -35,6 +35,8 @@ class DatabaseUpdateCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->migrationPath = 'Resources'.DIRECTORY_SEPARATOR.'updates';
+
         $output->writeln('<info>Gathering migration files from CampaignChain packages</info>');
         $output->writeln('');
 
@@ -73,7 +75,7 @@ class DatabaseUpdateCommand extends ContainerAwareCommand
         $fs = new Filesystem();
 
         foreach ($bundleList as $bundle) {
-            $packageMigrationsDir = $rootDir.'vendor'.DIRECTORY_SEPARATOR.$bundle->getName().DIRECTORY_SEPARATOR.self::MIGRATION_PATH;
+            $packageMigrationsDir = $rootDir.'vendor'.DIRECTORY_SEPARATOR.$bundle->getName().DIRECTORY_SEPARATOR.$this->migrationPath;
 
             if (!$fs->exists($packageMigrationsDir)) {
                 continue;
