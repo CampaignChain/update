@@ -23,13 +23,13 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-class GenerateDatabaseUpdateCommand extends ContainerAwareCommand
+class DatabaseDiffCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('campaignchain:database:generate-update')
-            ->setDescription('Creates an empty migration file for the selected package.')
+            ->setName('campaignchain:database:generate-diff')
+            ->setDescription('Creates a diff migration file for the selected package.')
         ;
     }
 
@@ -65,9 +65,9 @@ class GenerateDatabaseUpdateCommand extends ContainerAwareCommand
         $application->setAutoExit(false);
 
         $application->run(new ArrayInput([
-                'command' => 'doctrine:migrations:generate',
-                '--no-interaction' => true,
-            ]), $generateOutput);
+            'command' => 'doctrine:migrations:diff',
+            '--no-interaction' => true,
+        ]), $generateOutput);
 
         preg_match('/Generated new migration class to "(.*)"/', $generateOutput->fetch(), $matches);
 
@@ -89,7 +89,7 @@ class GenerateDatabaseUpdateCommand extends ContainerAwareCommand
         $fs->copy($pathForMigrationFile, $targetFile);
         $fs->remove($pathForMigrationFile);
 
-        $output->writeln('Generation finished. You can find your empty file here:');
+        $output->writeln('Generation finished. You can find your generated file here:');
         $output->writeln('');
         $output->writeln('<comment>'.$targetFile.'</comment>');
         $output->writeln('');
