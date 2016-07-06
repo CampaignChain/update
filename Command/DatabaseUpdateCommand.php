@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Serializer\Serializer;
@@ -37,42 +38,24 @@ class DatabaseUpdateCommand extends ContainerAwareCommand
     {
         $this->migrationPath = 'Resources'.DIRECTORY_SEPARATOR.'updates';
 
-        $output->writeln('<info>Gathering migration files from CampaignChain packages</info>');
-        $output->writeln('');
+        $io = new SymfonyStyle($input, $output);
+        $io->title('Gathering migration files from CampaignChain packages');
+        $io->newLine();
 
-        $rootDir = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
-        $finder = new Finder();
-        // Find all the CampaignChain module configuration files.
-        $finder->files()
-            ->in($rootDir)
-            ->exclude('app')
-            ->exclude('bin')
-            ->exclude('component')
-            ->exclude('web')
-            ->name('campaignchain.yml');
-
-        /** @var Bundle[] $bundleList */
-        $bundleList = [];
-
-
-        $coreComposerFile = $rootDir.'vendor'.DIRECTORY_SEPARATOR.'campaignchain'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'composer.json';
-        $bundleList[] = $this->getNewBundle($coreComposerFile);
-
-        foreach ($finder as $moduleConfig) {
-            $bundleComposer = $rootDir.str_replace(
-                    'campaignchain.yml',
-                    'composer.json',
-                    $moduleConfig->getRelativePathname()
-                );
-            $bundleList[] = $this->getNewBundle($bundleComposer);
-        }
+        $locator = $this->getContainer()->get('campaignchain.core.module.locator');
+        $bundleList = $locator->getAvailableBundles();
 
         if (empty($bundleList)) {
+            $io->error('No CampaignChain Module found');
             return;
         }
 
+        $rootDir = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
         $migrationDir = $rootDir.'app'.DIRECTORY_SEPARATOR.'campaignchain'.DIRECTORY_SEPARATOR.'updates';
+
         $fs = new Filesystem();
+
+        $table = [];
 
         foreach ($bundleList as $bundle) {
             $packageMigrationsDir = $rootDir.'vendor'.DIRECTORY_SEPARATOR.$bundle->getName().DIRECTORY_SEPARATOR.$this->migrationPath;
@@ -86,12 +69,18 @@ class DatabaseUpdateCommand extends ContainerAwareCommand
                 ->in($packageMigrationsDir)
                 ->name('Version*.php');
 
+            $files = [];
+
             /** @var SplFileInfo $migrationFile */
             foreach ($migrationFiles as $migrationFile) {
                 $fs->copy($migrationFile->getPathname(), $migrationDir.DIRECTORY_SEPARATOR.$migrationFile->getFilename(), true);
+                $files[] = $migrationFile->getFilename();
+
             }
+            $table[] = [$bundle->getName(), implode(', ', $files)];
 
         }
+        $io->table(['Module', 'Versions'], $table);
 
         $this->getApplication()
             ->run(new ArrayInput([
@@ -99,28 +88,5 @@ class DatabaseUpdateCommand extends ContainerAwareCommand
                 '--no-interaction' => true,
             ]), $output);
 
-    }
-
-    /**
-     * @param $bundleComposer
-     * @return Bundle
-     */
-    protected function getNewBundle($bundleComposer)
-    {
-        if(!file_exists($bundleComposer)) {
-            return;
-        }
-
-        $bundleComposerData = file_get_contents($bundleComposer);
-
-        $normalizer = new GetSetMethodNormalizer();
-        $normalizer->setIgnoredAttributes(array(
-            'require',
-            'keywords',
-        ));
-        $encoder = new JsonEncoder();
-        $serializer = new Serializer(array($normalizer), array($encoder));
-
-        return $serializer->deserialize($bundleComposerData,'CampaignChain\CoreBundle\Entity\Bundle','json');
     }
 }

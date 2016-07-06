@@ -16,15 +16,16 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 class GenerateDatabaseUpdateCommand extends ContainerAwareCommand
 {
+    /**
+     * @var SymfonyStyle
+     */
+    private $io;
+
     protected function configure()
     {
         $this
@@ -35,32 +36,14 @@ class GenerateDatabaseUpdateCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $bundles = $this->getPackages();
-        $packageNames = array_map(function(Bundle $bundle) {
-            return $bundle->getName();
-        }, $bundles);
+        $this->io = new SymfonyStyle($input, $output);
 
-        $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion(
-            sprintf('Please select the package, where you want to place the Migration file (defaults to %s)', $packageNames[0]),
-            $packageNames,
-            0
-        );
-        $question->setErrorMessage('Package name %s is invalid.');
-        $question->setPrompt('<question>Please select either the number or the name of the package :</question>');
+        $locator = $this->getContainer()->get('campaignchain.core.module.locator');
+        $bundles = $locator->getAvailableBundles();
 
-        $selectedName = $helper->ask($input, $output, $question);
-        $output->writeln('You have selected: '.$selectedName);
-
-        $selectedBundle = null;
-        foreach ($bundles as $bundle) {
-            if ($bundle->getName() == $selectedName) {
-                $selectedBundle = $bundle;
-            }
-        }
+        $selectedBundle = $this->selectBundle($bundles);
 
         $generateOutput = new BufferedOutput();
-
         $application = new Application($this->getContainer()->get('kernel'));
         $application->setAutoExit(false);
 
@@ -89,67 +72,40 @@ class GenerateDatabaseUpdateCommand extends ContainerAwareCommand
         $fs->copy($pathForMigrationFile, $targetFile);
         $fs->remove($pathForMigrationFile);
 
-        $output->writeln('Generation finished. You can find your empty file here:');
-        $output->writeln('');
-        $output->writeln('<comment>'.$targetFile.'</comment>');
-        $output->writeln('');
+        $this->io->success('Generation finished. You can find your empty file here');
+        $this->io->text($targetFile);
     }
 
     /**
-     * @return \CampaignChain\CoreBundle\Entity\Bundle[]
+     * @param Bundle[] $bundles
+     *
+     * @return Bundle|null
      */
-    private function getPackages()
+    private function selectBundle(array $bundles)
     {
-        $rootDir = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
-        $finder = new Finder();
-        // Find all the CampaignChain module configuration files.
-        $finder->files()
-            ->in($rootDir)
-            ->exclude('app')
-            ->exclude('bin')
-            ->exclude('component')
-            ->exclude('web')
-            ->name('campaignchain.yml');
+        $packageNames = array_map(function(Bundle $bundle) {
+            return $bundle->getName();
+        }, $bundles);
 
-        /** @var Bundle[] $bundleList */
-        $bundleList = [];
+        $selectedName = $this->io->choice(
+            'Please select the package, where you want to place the Migration file (defaults to campaignchain/core)',
+            $packageNames,
+            "campaignchain/core"
+        );
 
+        $this->io->text('You have selected: '.$selectedName);
 
-        $coreComposerFile = $rootDir.'vendor'.DIRECTORY_SEPARATOR.'campaignchain'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'composer.json';
-        $bundleList[] = $this->getNewBundle($coreComposerFile);
+        $selectedBundle = null;
 
-        foreach ($finder as $moduleConfig) {
-            $bundleComposer = $rootDir.str_replace(
-                    'campaignchain.yml',
-                    'composer.json',
-                    $moduleConfig->getRelativePathname()
-                );
-            $bundleList[] = $this->getNewBundle($bundleComposer);
+        foreach ($bundles as $bundle) {
+            if ($bundle->getName() != $selectedName) {
+                continue;
+            }
+
+            $selectedBundle = $bundle;
+            break;
         }
 
-        return $bundleList;
-    }
-
-    /**
-     * @param $bundleComposer
-     * @return Bundle
-     */
-    protected function getNewBundle($bundleComposer)
-    {
-        if(!file_exists($bundleComposer)) {
-            return;
-        }
-
-        $bundleComposerData = file_get_contents($bundleComposer);
-
-        $normalizer = new GetSetMethodNormalizer();
-        $normalizer->setIgnoredAttributes(array(
-            'require',
-            'keywords',
-        ));
-        $encoder = new JsonEncoder();
-        $serializer = new Serializer(array($normalizer), array($encoder));
-
-        return $serializer->deserialize($bundleComposerData,'CampaignChain\CoreBundle\Entity\Bundle','json');
+        return $selectedBundle;
     }
 }
