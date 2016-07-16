@@ -28,9 +28,16 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('campaignchain_deployment_update');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+            ->children()
+                ->arrayNode('directories')
+                    ->children()
+                        ->scalarNode('root')->end()
+                        ->scalarNode('schema')->end()
+                        ->scalarNode('data')->end()
+                    ->end()
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }

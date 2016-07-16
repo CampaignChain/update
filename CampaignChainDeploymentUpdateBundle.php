@@ -13,6 +13,7 @@ namespace CampaignChain\DeploymentUpdateBundle;
 use CampaignChain\DeploymentUpdateBundle\DependencyInjection\CompilerPass\CodeUpdaterCompilerPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use CampaignChain\DeploymentUpdateBundle\DependencyInjection\CampaignChainDeploymentUpdateExtension;
 
 class CampaignChainDeploymentUpdateBundle extends Bundle
 {
@@ -21,4 +22,8 @@ class CampaignChainDeploymentUpdateBundle extends Bundle
         $container->addCompilerPass(new CodeUpdaterCompilerPass());
     }
 
+    public function getContainerExtension()
+    {
+        return new CampaignChainDeploymentUpdateExtension();
+    }
 }
