@@ -1,12 +1,16 @@
 <?php
 /*
- * This file is part of the CampaignChain package.
+ * Copyright 2016 CampaignChain, Inc. <info@campaignchain.com>
  *
- * (c) CampaignChain, Inc. <info@campaignchain.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * NOTICE:  All information contained herein is, and remains the property of
+ * CampaignChain, Inc. and its suppliers, if any. The intellectual and technical
+ * concepts contained herein are proprietary to CampaignChain, Inc. and its
+ * suppliers and may be covered by U.S. and Foreign Patents, patents in process,
+ * and are protected by trade secret or copyright law. Dissemination of this
+ * information or reproduction of this material is strictly forbidden unless prior
+ * written permission is obtained from CampaignChain, Inc..
  */
+
 namespace CampaignChain\DeploymentUpdateBundle\Service;
 
 use CampaignChain\DeploymentUpdateBundle\Entity\CodeUpdateVersion;
