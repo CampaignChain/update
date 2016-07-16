@@ -1,11 +1,5 @@
 doctrine_migrations:
-    dir_name: "%kernel.root_dir%/campaignchain/updates"
+    dir_name: "%campaignchain_deployment_update.generate_dir%"
     namespace: Application\Migrations
     table_name: campaignchain_deployment_update_schema
     name: Application Migrations
-
-campaignchain_deployment_update:
-    directories:
-        root: /Resources/update
-        schema: /schema
-        data: /data
