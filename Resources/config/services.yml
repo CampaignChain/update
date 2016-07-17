@@ -9,7 +9,7 @@
 # written permission is obtained from CampaignChain, Inc..
 
 services:
-    campaignchain.deployment.update.code_updater:
-        class: CampaignChain\DeploymentUpdateBundle\Service\CodeUpdateService
+    campaignchain.deployment.update.data:
+        class: CampaignChain\DeploymentUpdateBundle\Service\DataUpdateService
         arguments:
             - '@doctrine.orm.default_entity_manager'

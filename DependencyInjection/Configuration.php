@@ -33,13 +33,13 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->scalarNode('diff_package')->end()
                 ->arrayNode('bundle')
                     ->children()
                         ->scalarNode('schema_dir')->end()
                         ->scalarNode('data_dir')->end()
                     ->end()
                 ->end()
-                ->scalarNode('generate_dir')->end()
             ->end();
 
         return $treeBuilder;

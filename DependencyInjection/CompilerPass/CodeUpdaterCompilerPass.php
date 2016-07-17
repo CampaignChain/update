@@ -21,12 +21,12 @@ class CodeUpdaterCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('campaignchain.deployment.update.code_updater')) {
+        if (!$container->has('campaignchain.deployment.update.data')) {
             return;
         }
 
         $definition = $container->findDefinition(
-            'campaignchain.deployment.update.code_updater'
+            'campaignchain.deployment.update.data'
         );
 
         $taggedServices = $container->findTaggedServiceIds(

@@ -17,9 +17,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="campaignchain_code_update_version")
+ * @ORM\Table(name="campaignchain_deployment_update_data")
  */
-class CodeUpdateVersion
+class DataUpdateVersion
 {
     /**
      * @ORM\Column(type="string")

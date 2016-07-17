@@ -23,19 +23,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
-class DatabaseDiffCommand extends ContainerAwareCommand
+class GenerateBase extends ContainerAwareCommand
 {
     /**
      * @var SymfonyStyle
      */
     private $io;
 
-    protected function configure()
+    protected function getDoctrineMigrationsCommand()
     {
-        $this
-            ->setName('campaignchain:database:generate-diff')
-            ->setDescription('Creates a diff migration file for the selected package.')
-        ;
+        throw new \Exception('You must overwrite '.get_class($this).'::'.__FUNCTION__);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -51,7 +48,7 @@ class DatabaseDiffCommand extends ContainerAwareCommand
         $application->setAutoExit(false);
 
         $application->run(new ArrayInput([
-            'command' => 'doctrine:migrations:diff',
+            'command' => $this->getDoctrineMigrationsCommand(),
             '--no-interaction' => true,
         ]), $generateOutput);
 
@@ -69,14 +66,16 @@ class DatabaseDiffCommand extends ContainerAwareCommand
             return;
         }
 
-        $rootDir = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
-        $targetFile = $rootDir.'vendor'.DIRECTORY_SEPARATOR.$selectedBundle->getName().DIRECTORY_SEPARATOR.'Resources'.DIRECTORY_SEPARATOR.'updates'.DIRECTORY_SEPARATOR.$fileNames[0];
+        $schemaFile  = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..';
+        $schemaFile .= DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.$selectedBundle->getName();
+        $schemaFile .= str_replace('/', DIRECTORY_SEPARATOR, $this->getContainer()->getParameter('campaignchain_deployment_update.bundle.schema_dir'));
+        $schemaFile .= DIRECTORY_SEPARATOR.$fileNames[0];
         $fs = new Filesystem();
-        $fs->copy($pathForMigrationFile, $targetFile);
+        $fs->copy($pathForMigrationFile, $schemaFile);
         $fs->remove($pathForMigrationFile);
 
-        $this->io->success('Generation finished. You can find your empty file here');
-        $this->io->text($targetFile);
+        $this->io->success('Generation finished. You can find the file here:');
+        $this->io->text($schemaFile);
     }
 
     /**
@@ -91,9 +90,9 @@ class DatabaseDiffCommand extends ContainerAwareCommand
         }, $bundles);
 
         $selectedName = $this->io->choice(
-            'Please select the package, where you want to place the Migration file (defaults to campaignchain/core)',
+            'Please select the package, where you want to place the Migration file',
             $packageNames,
-            "campaignchain/core"
+            $this->getContainer()->getParameter('campaignchain_deployment_update.diff_package')
         );
 
         $this->io->text('You have selected: '.$selectedName);

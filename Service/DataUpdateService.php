@@ -13,18 +13,18 @@
 
 namespace CampaignChain\DeploymentUpdateBundle\Service;
 
-use CampaignChain\DeploymentUpdateBundle\Entity\CodeUpdateVersion;
+use CampaignChain\DeploymentUpdateBundle\Entity\DataUpdateVersion;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Class CodeUpdateService
+ * Class DataUpdateService
  * @package CampaignChain\Service\Command
  */
-class CodeUpdateService
+class DataUpdateService
 {
     /**
-     * @var CodeUpdateInterface[]
+     * @var DataUpdateInterface[]
      */
     private $versions = [];
 
@@ -34,7 +34,7 @@ class CodeUpdateService
     private $entityManager;
 
     /**
-     * CodeUpdateService constructor.
+     * DataUpdateService constructor.
      *
      * @param EntityManager $entityManager
      */
@@ -44,9 +44,9 @@ class CodeUpdateService
     }
 
     /**
-     * @param CodeUpdateInterface $codeUpdate
+     * @param DataUpdateInterface $codeUpdate
      */
-    public function addUpdater(CodeUpdateInterface $codeUpdate)
+    public function addUpdater(DataUpdateInterface $codeUpdate)
     {
         $this->versions[(int) $codeUpdate->getVersion()] = $codeUpdate;
         ksort($this->versions);
@@ -58,7 +58,7 @@ class CodeUpdateService
      */
     public function updateCode(SymfonyStyle $io = null)
     {
-        $io->title('CampaignChain code update');
+        $io->title('CampaignChain Data Update');
 
         if (empty($this->versions)) {
             $io->warning('No code updater Service found, maybe you didn\'t enabled a bundle?');
@@ -69,11 +69,11 @@ class CodeUpdateService
         $io->comment('The following versions will be updated');
 
         $migratedVersions = array_map(
-            function(CodeUpdateVersion $version) {
+            function(DataUpdateVersion $version) {
                 return $version->getVersion();
             },
             $this->entityManager
-                ->getRepository('CampaignChainDeploymentUpdateBundle:CodeUpdateVersion')
+                ->getRepository('CampaignChainDeploymentUpdateBundle:DataUpdateVersion')
                 ->findAll()
         );
 
@@ -92,7 +92,7 @@ class CodeUpdateService
             $result = $class->execute($io);
 
             if ($result) {
-                $dbVersion = new CodeUpdateVersion();
+                $dbVersion = new DataUpdateVersion();
                 $dbVersion->setVersion($version);
 
                 $this->entityManager->persist($dbVersion);

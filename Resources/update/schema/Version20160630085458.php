@@ -26,7 +26,7 @@ class Version20160630085458 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql('CREATE TABLE campaignchain_code_update_version (version VARCHAR(255) NOT NULL, PRIMARY KEY(version)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE campaignchain_deployment_update_data (version VARCHAR(255) NOT NULL, PRIMARY KEY(version)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
     }
 
     /**
@@ -34,6 +34,6 @@ class Version20160630085458 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql('DROP TABLE campaignchain_code_update_version');
+        $this->addSql('DROP TABLE campaignchain_deployment_update_data');
     }
 }

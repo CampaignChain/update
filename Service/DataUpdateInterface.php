@@ -15,7 +15,7 @@ namespace CampaignChain\DeploymentUpdateBundle\Service;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-interface CodeUpdateInterface {
+interface DataUpdateInterface {
 
     /**
      * Return the version for the code update

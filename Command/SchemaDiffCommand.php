@@ -13,26 +13,18 @@
 
 namespace CampaignChain\DeploymentUpdateBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
-
-class CodeUpdateCommand extends ContainerAwareCommand
+class SchemaDiffCommand extends GenerateBase
 {
     protected function configure()
     {
         $this
-            ->setName('campaignchain:code:update')
-            ->setDescription('Run code update for the packages.')
+            ->setName('campaignchain:schema:diff')
+            ->setDescription('Creates a schema migration file for the selected package.')
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function getDoctrineMigrationsCommand()
     {
-        $io = new SymfonyStyle($input, $output);
-
-        $service = $this->getContainer()->get('campaignchain.deployment.update.code_updater');
-        $service->updateCode($io);
+        return 'doctrine:migrations:diff';
     }
 }

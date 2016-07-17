@@ -26,21 +26,24 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
-class DatabaseUpdateCommand extends ContainerAwareCommand
+class SchemaUpdateCommand extends ContainerAwareCommand
 {
     private $migrationPath;
 
     protected function configure()
     {
         $this
-            ->setName('campaignchain:database:update')
-            ->setDescription('Run database update for the packages.')
+            ->setName('campaignchain:schema:update')
+            ->setDescription('Run database schema update for the packages.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->migrationPath = 'Resources'.DIRECTORY_SEPARATOR.'updates';
+        $this->migrationPath =
+            str_replace('/', DIRECTORY_SEPARATOR,
+                $this->getContainer()->getParameter('campaignchain_deployment_update.bundle.schema_dir')
+            );
 
         $io = new SymfonyStyle($input, $output);
         $io->title('Gathering migration files from CampaignChain packages');
@@ -54,30 +57,31 @@ class DatabaseUpdateCommand extends ContainerAwareCommand
             return;
         }
 
-        $rootDir = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
-        $migrationDir = $rootDir.'app'.DIRECTORY_SEPARATOR.'campaignchain'.DIRECTORY_SEPARATOR.'updates';
+        $migrationsDir  = $this->getContainer()->getParameter('doctrine_migrations.dir_name');
 
         $fs = new Filesystem();
 
         $table = [];
 
         foreach ($bundleList as $bundle) {
-            $packageMigrationsDir = $rootDir.'vendor'.DIRECTORY_SEPARATOR.$bundle->getName().DIRECTORY_SEPARATOR.$this->migrationPath;
+            $packageSchemaDir = $this->getContainer()->getParameter('kernel.root_dir').
+                DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'vendor'.
+                DIRECTORY_SEPARATOR.$bundle->getName().$this->migrationPath;
 
-            if (!$fs->exists($packageMigrationsDir)) {
+            if (!$fs->exists($packageSchemaDir)) {
                 continue;
             }
 
             $migrationFiles = new Finder();
             $migrationFiles->files()
-                ->in($packageMigrationsDir)
+                ->in($packageSchemaDir)
                 ->name('Version*.php');
 
             $files = [];
 
             /** @var SplFileInfo $migrationFile */
             foreach ($migrationFiles as $migrationFile) {
-                $fs->copy($migrationFile->getPathname(), $migrationDir.DIRECTORY_SEPARATOR.$migrationFile->getFilename(), true);
+                $fs->copy($migrationFile->getPathname(), $migrationsDir.DIRECTORY_SEPARATOR.$migrationFile->getFilename(), true);
                 $files[] = $migrationFile->getFilename();
 
             }
@@ -91,6 +95,5 @@ class DatabaseUpdateCommand extends ContainerAwareCommand
                 'command' => 'doctrine:migrations:migrate',
                 '--no-interaction' => true,
             ]), $output);
-
     }
 }
