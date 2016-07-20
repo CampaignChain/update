@@ -17,6 +17,7 @@ use CampaignChain\CoreBundle\Entity\Bundle;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
@@ -35,6 +36,12 @@ class SchemaUpdateCommand extends ContainerAwareCommand
         $this
             ->setName('campaignchain:schema:update')
             ->setDescription('Run database schema update for the packages.')
+            ->addOption(
+                'gather-only',
+                null,
+                InputOption::VALUE_NONE,
+                'With this option, the command will only gather the files.'
+            )
         ;
     }
 
@@ -90,10 +97,12 @@ class SchemaUpdateCommand extends ContainerAwareCommand
         }
         $io->table(['Module', 'Versions'], $table);
 
-        $this->getApplication()
-            ->run(new ArrayInput([
-                'command' => 'doctrine:migrations:migrate',
-                '--no-interaction' => true,
-            ]), $output);
+        if (!$input->getOption('gather-only')) {
+            $this->getApplication()
+                ->run(new ArrayInput([
+                    'command' => 'doctrine:migrations:migrate',
+                    '--no-interaction' => true,
+                ]), $output);
+        }
     }
 }
