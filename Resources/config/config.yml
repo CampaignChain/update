@@ -9,7 +9,7 @@
 # written permission is obtained from CampaignChain, Inc..
 
 campaignchain_deployment_update:
-    diff_package: campaignchain/campaignchain-custom-update
+    diff_package: campaignchain/campaignchain-ee-update
     bundle:
         schema_dir: /Resources/update/schema
         data_dir: /Resources/update/data
