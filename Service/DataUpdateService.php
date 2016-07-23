@@ -17,7 +17,7 @@
 
 namespace CampaignChain\UpdateBundle\Service;
 
-use CampaignChain\DeploymentUpdateBundle\Entity\DataUpdateVersion;
+use CampaignChain\UpdateBundle\Entity\DataUpdateVersion;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -77,7 +77,7 @@ class DataUpdateService
                 return $version->getVersion();
             },
             $this->entityManager
-                ->getRepository('CampaignChainDeploymentUpdateBundle:DataUpdateVersion')
+                ->getRepository('CampaignChainUpdateBundle:DataUpdateVersion')
                 ->findAll()
         );
 

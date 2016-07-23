@@ -38,7 +38,7 @@ class SchemaUpdateCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('campaignchain:schema:update')
+            ->setName('campaignchain:update:schema')
             ->setDescription('Run database schema update for the packages.')
             ->addOption(
                 'gather-only',

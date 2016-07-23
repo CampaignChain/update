@@ -14,6 +14,6 @@
 
 services:
     campaignchain.deployment.update.data:
-        class: CampaignChain\DeploymentUpdateBundle\Service\DataUpdateService
+        class: CampaignChain\UpdateBundle\Service\DataUpdateService
         arguments:
             - '@doctrine.orm.default_entity_manager'

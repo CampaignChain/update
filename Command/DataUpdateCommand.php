@@ -27,7 +27,7 @@ class DataUpdateCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('campaignchain:data:update')
+            ->setName('campaignchain:update:data')
             ->setDescription('Run data update routines for the packages.')
         ;
     }

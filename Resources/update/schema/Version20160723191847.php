@@ -19,7 +19,6 @@ class Version20160723191847 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('RENAME TABLE campaignchain_deployment_update_data TO campaignchain_update_data');
-        $this->addSql('RENAME TABLE campaignchain_deployment_update_schema TO campaignchain_update_schema');
     }
 
     /**
@@ -31,6 +30,5 @@ class Version20160723191847 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('RENAME TABLE campaignchain_update_data TO campaignchain_deployment_update_data');
-        $this->addSql('RENAME TABLE campaignchain_update_schema TO campaignchain_deployment_update_schema');
     }
 }
