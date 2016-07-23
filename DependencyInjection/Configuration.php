@@ -33,7 +33,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('campaignchain_deployment_update');
+        $rootNode = $treeBuilder->root('campaignchain_update');
 
         $rootNode
             ->children()

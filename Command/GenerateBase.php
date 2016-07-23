@@ -72,7 +72,7 @@ class GenerateBase extends ContainerAwareCommand
 
         $schemaFile  = $this->getContainer()->getParameter('kernel.root_dir').DIRECTORY_SEPARATOR.'..';
         $schemaFile .= DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.$selectedBundle->getName();
-        $schemaFile .= str_replace('/', DIRECTORY_SEPARATOR, $this->getContainer()->getParameter('campaignchain_deployment_update.bundle.schema_dir'));
+        $schemaFile .= str_replace('/', DIRECTORY_SEPARATOR, $this->getContainer()->getParameter('campaignchain_update.bundle.schema_dir'));
         $schemaFile .= DIRECTORY_SEPARATOR.$fileNames[0];
         $fs = new Filesystem();
         $fs->copy($pathForMigrationFile, $schemaFile);
@@ -96,7 +96,7 @@ class GenerateBase extends ContainerAwareCommand
         $selectedName = $this->io->choice(
             'Please select the package, where you want to place the Migration file',
             $packageNames,
-            $this->getContainer()->getParameter('campaignchain_deployment_update.diff_package')
+            $this->getContainer()->getParameter('campaignchain_update.diff_package')
         );
 
         $this->io->text('You have selected: '.$selectedName);

@@ -53,7 +53,7 @@ class SchemaUpdateCommand extends ContainerAwareCommand
     {
         $this->migrationPath =
             str_replace('/', DIRECTORY_SEPARATOR,
-                $this->getContainer()->getParameter('campaignchain_deployment_update.bundle.schema_dir')
+                $this->getContainer()->getParameter('campaignchain_update.bundle.schema_dir')
             );
 
         $io = new SymfonyStyle($input, $output);

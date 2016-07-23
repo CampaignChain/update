@@ -17,12 +17,12 @@
 
 namespace CampaignChain\UpdateBundle;
 
-use CampaignChain\DeploymentUpdateBundle\DependencyInjection\CompilerPass\CodeUpdaterCompilerPass;
+use CampaignChain\UpdateBundle\DependencyInjection\CompilerPass\CodeUpdaterCompilerPass;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use CampaignChain\DeploymentUpdateBundle\DependencyInjection\CampaignChainDeploymentUpdateExtension;
+use CampaignChain\UpdateBundle\DependencyInjection\CampaignChainUpdateExtension;
 
-class CampaignChainDeploymentUpdateBundle extends Bundle
+class CampaignChainUpdateBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {
@@ -31,6 +31,6 @@ class CampaignChainDeploymentUpdateBundle extends Bundle
 
     public function getContainerExtension()
     {
-        return new CampaignChainDeploymentUpdateExtension();
+        return new CampaignChainUpdateExtension();
     }
 }
