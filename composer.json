@@ -1,10 +1,10 @@
 {
-    "name": "campaignchain/deployment-update",
-    "description": "Database update scripts",
+    "name": "campaignchain/update",
+    "description": "Schema and data update routines",
     "keywords": ["campaignchain"],
     "type": "campaignchain-symfony",
     "homepage": "http://www.campaignchain.com",
-    "license": "proprietary",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "CampaignChain, Inc.",
@@ -13,20 +13,20 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/CampaignChain/campaignchain-ee/issues",
+        "issues": "https://github.com/CampaignChain/campaignchain/issues",
         "docs": "http://doc.campaignchain.com"
     },
     "require": {
         "doctrine/doctrine-migrations-bundle": "~1.1"
     },
     "autoload": {
-        "psr-4": { "CampaignChain\\DeploymentUpdateBundle\\": "" }
+        "psr-4": { "CampaignChain\\UpdateBundle\\": "" }
     },
     "extra": {
         "campaignchain": {
             "kernel": {
                 "classes": [
-                    "CampaignChain\\DeploymentUpdateBundle\\CampaignChainDeploymentUpdateBundle",
+                    "CampaignChain\\UpdateBundle\\CampaignChainUpdateBundle",
                     "Doctrine\\Bundle\\MigrationsBundle\\DoctrineMigrationsBundle"
                 ]
             }
