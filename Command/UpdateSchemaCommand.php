@@ -31,7 +31,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
-class SchemaUpdateCommand extends ContainerAwareCommand
+class UpdateSchemaCommand extends ContainerAwareCommand
 {
     private $migrationPath;
 
