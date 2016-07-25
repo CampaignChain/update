@@ -65,12 +65,12 @@ class DataUpdateService
         $io->title('CampaignChain Data Update');
 
         if (empty($this->versions)) {
-            $io->warning('No code updater Service found, maybe you didn\'t enabled a bundle?');
+            $io->warning('No code updater Service found, maybe you didn\'t enable a bundle?');
 
             return;
         }
 
-        $io->comment('The following versions will be updated');
+        $io->comment('The following data versions will be updated');
 
         $migratedVersions = array_map(
             function(DataUpdateVersion $version) {
@@ -91,7 +91,7 @@ class DataUpdateService
             $io->section('Version '.$class->getVersion());
             $io->listing($class->getDescription());
 
-            $io->text('Begin Update');
+            $io->text('Begin data update');
 
             $result = $class->execute($io);
 
@@ -102,7 +102,7 @@ class DataUpdateService
                 $this->entityManager->persist($dbVersion);
                 $this->entityManager->flush();
 
-                $io->text('Update finished');
+                $io->text('Data update finished');
             }
 
 
@@ -110,9 +110,9 @@ class DataUpdateService
         }
 
         if (!$updated) {
-            $io->success('Everything is up to date.');
+            $io->success('All data is up to date.');
         } else {
-            $io->success('Every version is updated.');
+            $io->success('Every data version has been updated.');
         }
     }
 }

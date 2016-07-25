@@ -22,4 +22,4 @@ doctrine_migrations:
     dir_name: "%kernel.root_dir%/campaignchain/update/schema"
     namespace: Application\Migrations
     table_name: campaignchain_update_schema
-    name: Application Migrations
+    name: CampaignChain Schema Update
