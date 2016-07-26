@@ -1,13 +1,13 @@
 # CampaignChain Update Bundle
 
-Configuration
--------------
+The update feature is a package that is included in CampaignChain by default and
+can also be used independently from CampaignChain as a regular Symfony bundle.
 
-You can configure the default package name and the target directories for the
-schema and update files with these configuration parameters:
+The update package offers you the ability to include update routines in multiple
+separate CampaignChain modules or Symfony bundles. Essentially, it extends the
+[DoctrineMigrationsBundle](https://github.com/doctrine/DoctrineMigrationsBundle).
 
-    campaignchain_update:
-        diff_package: campaignchain/core
-        bundle:
-            schema_dir: /Resources/update/schema
-            data_dir: /Resources/update/data
+## Documentation
+
+Documentation on how to install and use this bundle is available in the
+[CampaignChain Documentation](http://docs.campaignchain.com/en/master/package/campaignchain_update.html).
