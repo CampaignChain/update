@@ -18,7 +18,7 @@
 namespace CampaignChain\UpdateBundle\Service;
 
 use CampaignChain\UpdateBundle\Entity\DataUpdateVersion;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -33,18 +33,18 @@ class DataUpdateService
     private $versions = [];
 
     /**
-     * @var EntityManager
+     * @var Registry
      */
-    private $entityManager;
+    private $em;
 
     /**
      * DataUpdateService constructor.
      *
-     * @param EntityManager $entityManager
+     * @param Registry $Registry
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->entityManager = $entityManager;
+        $this->em = $managerRegistry->getManager();
     }
 
     /**
@@ -76,7 +76,7 @@ class DataUpdateService
             function(DataUpdateVersion $version) {
                 return $version->getVersion();
             },
-            $this->entityManager
+            $this->em
                 ->getRepository('CampaignChainUpdateBundle:DataUpdateVersion')
                 ->findAll()
         );
@@ -99,8 +99,8 @@ class DataUpdateService
                 $dbVersion = new DataUpdateVersion();
                 $dbVersion->setVersion($version);
 
-                $this->entityManager->persist($dbVersion);
-                $this->entityManager->flush();
+                $this->em->persist($dbVersion);
+                $this->em->flush();
 
                 $io->text('Data update finished');
             }
